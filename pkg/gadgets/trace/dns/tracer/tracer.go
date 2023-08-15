@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"net/netip"
-	"syscall"
 	"time"
 	"unsafe"
 
@@ -213,14 +212,9 @@ func bpfEventToDNSEvent(bpfEvent *dnsEventT, netns uint64) (*types.Event, error)
 	event.Event.Timestamp = gadgets.WallTimeFromBootTime(bpfEvent.Timestamp)
 
 	event.ID = fmt.Sprintf("%.4x", bpfEvent.Id)
-
-	if bpfEvent.Af == syscall.AF_INET {
-		event.SrcIP = gadgets.IPStringFromBytes(bpfEvent.SaddrV6, 4)
-		event.DstIP = gadgets.IPStringFromBytes(bpfEvent.DaddrV6, 4)
-	} else if bpfEvent.Af == syscall.AF_INET6 {
-		event.SrcIP = gadgets.IPStringFromBytes(bpfEvent.SaddrV6, 6)
-		event.DstIP = gadgets.IPStringFromBytes(bpfEvent.DaddrV6, 6)
-	}
+	ipversion := gadgets.IPVerFromAF(bpfEvent.Af)
+	event.SrcIP = gadgets.IPStringFromBytes(bpfEvent.SaddrV6, ipversion)
+	event.DstIP = gadgets.IPStringFromBytes(bpfEvent.DaddrV6, ipversion)
 
 	if bpfEvent.Qr == 1 {
 		event.Qr = types.DNSPktTypeResponse

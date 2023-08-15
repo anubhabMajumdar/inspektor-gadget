@@ -311,9 +311,9 @@ func ProtoString(proto int) string {
 	// https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
 	protoStr := fmt.Sprintf("UNKNOWN#%d", proto)
 	switch proto {
-	case 6:
+	case unix.IPPROTO_TCP:
 		protoStr = "TCP"
-	case 17:
+	case unix.IPPROTO_UDP:
 		protoStr = "UDP"
 	}
 	return protoStr
