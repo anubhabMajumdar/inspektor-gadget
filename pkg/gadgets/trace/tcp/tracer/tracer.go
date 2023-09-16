@@ -143,7 +143,7 @@ func (t *Tracer) install() error {
 		return fmt.Errorf("attaching kprobe: %w", err)
 	}
 
-	reader, err := perf.NewReader(t.objs.tcptracerMaps.Events, gadgets.PerfBufferPages*os.Getpagesize())
+	reader, err := perf.NewReader(t.objs.tcptracerMaps.Events, os.Getpagesize())
 	if err != nil {
 		return fmt.Errorf("creating perf ring buffer: %w", err)
 	}
